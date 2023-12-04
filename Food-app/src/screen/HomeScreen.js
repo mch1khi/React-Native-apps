@@ -11,7 +11,7 @@ const restaurants = [
         categories: ["Vegan", "Organic"],
         deliveryTime: "30 mins",
         distance: "2 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/vegan.jpeg")
     },
     {
         id: 2,
@@ -19,7 +19,7 @@ const restaurants = [
         categories: ["Seafood", "Grill"],
         deliveryTime: "45 mins",
         distance: "5 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/fish.jpeg")
     },
     {
         id: 3,
@@ -27,7 +27,7 @@ const restaurants = [
         categories: ["Indian", "Thai"],
         deliveryTime: "35 mins",
         distance: "3 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/spicy.jpeg")
     },
     {
         id: 4,
@@ -35,14 +35,14 @@ const restaurants = [
         categories: ["Italian", "Pasta"],
         deliveryTime: "40 mins",
         distance: "4 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/italian.webp")
     },
     {
         id: 5,
-        name: "Burger Hub",
-        categories: ["Fast Food", "Burgers"],
-        deliveryTime: "25 mins",
-        distance: "1.5 km",
+        name: "Resale Burgers",
+        categories: ["Kitty's best food"],
+        deliveryTime: "5 mins",
+        distance: "0.1 km",
         image: require("../../assets/dummy-1.jpeg")
     },
     {
@@ -51,7 +51,7 @@ const restaurants = [
         categories: ["Japanese", "Sushi"],
         deliveryTime: "50 mins",
         distance: "6 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/sushi.jpeg")
     },
     {
         id: 7,
@@ -59,7 +59,7 @@ const restaurants = [
         categories: ["Desserts", "Bakery"],
         deliveryTime: "20 mins",
         distance: "2.5 km",
-        image: require("../../assets/dummy-1.jpeg")
+        image: require("../../assets/download.jpeg")
     }
 ];
 

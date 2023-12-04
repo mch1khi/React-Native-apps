@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     container: {
         width: deviceWidth - 20,
         alignItems: 'center',
-        marginTop: 25,
+        marginTop: 12.5,
+        marginBottom: 12.5,
     },
     cardContainer: {
 
