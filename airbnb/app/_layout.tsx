@@ -8,22 +8,22 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-const tokenCache={
-  async getToken(key:string) {
+const tokenCache = {
+  async getToken(key: string) {
     try {
       return SecureStore.getItemAsync(key);
-    } catch (err){
+    } catch (err) {
       return null;
     }
   },
-  async saveToken(key:string,value:string){
+  async saveToken(key: string, value: string) {
     try {
-      return SecureStore.getItemAsync(key);
-    } catch (err){
-      return null;
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
     }
-  }
-}
+  },
+};
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -61,10 +61,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return(
-  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
-  <RootLayoutNav />
-  </ClerkProvider>);
+  return (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
+      <RootLayoutNav />
+    </ClerkProvider>
+  );
 }
 
 function RootLayoutNav() {
