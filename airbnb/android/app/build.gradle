@@ -81,7 +81,7 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.airbnb"
+    namespace 'com.anonymous.airbnb'
     defaultConfig {
         applicationId 'com.anonymous.airbnb'
         minSdkVersion rootProject.ext.minSdkVersion

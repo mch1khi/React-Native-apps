@@ -3,7 +3,7 @@ import { isLoaded, useFonts } from 'expo-font';
 import { SplashScreen, Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
-import  * as SecureStore from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -70,13 +70,13 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const router = useRouter();
-  const {isLoaded, isSignedIn} = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
-if (isLoaded && !isSignedIn){
-  router.push('/(modals)/login');
-}
-},[isLoaded])
+    if (isLoaded && !isSignedIn) {
+      router.push('/(modals)/login');
+    }
+  }, [isLoaded])
   return (
 
     <Stack>
@@ -96,7 +96,7 @@ if (isLoaded && !isSignedIn){
 
       <Stack.Screen name="listing/[id]" options={{ headerTitle: '' }} />
       <Stack.Screen name="(modals)/booking" options={{
-        presentation: 'transparentModal', animation:'fade', headerLeft: () => (
+        presentation: 'transparentModal', animation: 'fade', headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name='close-outline' size={28} />
           </TouchableOpacity>)
