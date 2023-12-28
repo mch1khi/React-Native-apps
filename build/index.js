@@ -14,16 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const bcrypt_1 = require("bcrypt");
 const stream_chat_1 = require("stream-chat");
+const bcrypt_1 = require("bcrypt");
 dotenv_1.default.config();
 const { PORT, STREAM_API_KEY, STREAM_API_SECRET } = process.env;
 const client = stream_chat_1.StreamChat.getInstance(STREAM_API_KEY, STREAM_API_SECRET);
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const salt = (0, bcrypt_1.genSaltSync)(10);
-1;
 const USERS = [];
+// Create user in Stream Chat
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -31,6 +31,7 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             message: 'Email and password are required.',
         });
     }
+    // Minlength 6
     if (password.length < 6) {
         return res.status(400).json({
             message: 'Password must be at least 6 characters.',
@@ -44,32 +45,38 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     try {
         const hashed_password = (0, bcrypt_1.hashSync)(password, salt);
-        const id = Math.random().toString(36).slice(2);
-        const newUser = {
+        // Generate random id and push to in memory users
+        const id = Math.random().toString(36).substr(2, 9);
+        const user = {
             id,
             email,
             hashed_password,
         };
-        USERS.push(newUser);
+        USERS.push(user);
+        // Create user in Stream Chat
         yield client.upsertUser({
             id,
             email,
-            name: email
+            name: email,
         });
+        // Create token for user
         const token = client.createToken(id);
-        return res.status(200).json({
+        return res.json({
             token,
             user: {
-                id,
-                email,
+                id: user.id,
+                email: user.email,
             },
         });
     }
-    catch (err) {
-        res.status(500).json({ error: 'User already ecists.' });
+    catch (e) {
+        return res.json({
+            message: 'User already exists.',
+        });
     }
 }));
-app.post('/login', (req, res) => {
+// Login user
+app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = USERS.find((user) => user.email === email);
     const hashed_password = (0, bcrypt_1.hashSync)(password, salt);
@@ -78,16 +85,17 @@ app.post('/login', (req, res) => {
             message: 'Invalid credentials.',
         });
     }
+    // Create token for user
     const token = client.createToken(user.id);
-    return res.status(200).json({
+    return res.json({
         token,
         user: {
             id: user.id,
-            email: user.email
+            email: user.email,
         },
     });
-});
+}));
 app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+    console.log(`App listening on port ${PORT}`);
 });
 //# sourceMappingURL=index.js.map

@@ -1,100 +1,107 @@
-import  express  from "express";
-import  dotenv  from "dotenv";
-import { genSaltSync, hashSync } from "bcrypt";
-import { StreamChat } from "stream-chat";
+import express from 'express';
+import dotenv from 'dotenv';
+import { StreamChat } from 'stream-chat';
+import { genSaltSync, hashSync } from 'bcrypt';
 
 dotenv.config();
 
-const {PORT, STREAM_API_KEY, STREAM_API_SECRET} = process.env;
-const client = StreamChat.getInstance(STREAM_API_KEY!, STREAM_API_SECRET)
+const { PORT, STREAM_API_KEY, STREAM_API_SECRET } = process.env;
+const client = StreamChat.getInstance(STREAM_API_KEY!, STREAM_API_SECRET);
 
 const app = express();
-
 app.use(express.json());
+const salt = genSaltSync(10);
 
-const salt = genSaltSync(10);1
-
-interface User{
-    id:string;
-    email:string;
-    hashed_password:string;
+interface User {
+  id: string;
+  email: string;
+  hashed_password: string;
 }
 const USERS: User[] = [];
 
-app.post('/register', async (req, res) =>{
-    const {email, password} = req.body;
-    
-    if (!email || !password){
-        return res.status(400).json({
-            message:'Email and password are required.',
-        });
-    }
-    if (password.length < 6){
-        return res.status(400).json({
-            message: 'Password must be at least 6 characters.',
-        });
-    }
+// Create user in Stream Chat
+app.post('/register', async (req, res) => {
+  const { email, password } = req.body;
 
-    const existingUser = USERS.find((user) => user.email === email);
-
-    if (existingUser){
-        return res.status(400).json({
-            message: 'User already exists.',
-        });
-    }
-
-    try{
-        const hashed_password = hashSync(password, salt);
-        const id = Math.random().toString(36).slice(2);
-        const newUser= {
-            id,
-            email,
-            hashed_password,
-        };
-        USERS.push(newUser);
-
-        await client.upsertUser({ 
-            id,
-            email,
-            name:email
-        });
-        const token = client.createToken(id);
-
-        return res.status(200).json({
-            token,
-            user:{
-                id,
-                email,
-            },
-        });
-
-    } catch (err) {
-        res.status(500).json({error : 'User already ecists.'});
-    }
-
-});
-app.post('/login', (req, res) =>{
-const {email,  password} = req.body;
-const user = USERS.find((user) => user.email === email);
-const hashed_password = hashSync(password, salt);
-
-if (!user || user.hashed_password !== hashed_password){
+  if (!email || !password) {
     return res.status(400).json({
-        message:'Invalid credentials.',
+      message: 'Email and password are required.',
     });
-}
+  }
 
-const token = client.createToken(user.id);
+  // Minlength 6
+  if (password.length < 6) {
+    return res.status(400).json({
+      message: 'Password must be at least 6 characters.',
+    });
+  }
 
-return res.status(200).json({
+  const existingUser = USERS.find((user) => user.email === email);
+
+  if (existingUser) {
+    return res.status(400).json({
+      message: 'User already exists.',
+    });
+  }
+
+  try {
+    const hashed_password = hashSync(password, salt);
+    // Generate random id and push to in memory users
+    const id = Math.random().toString(36).substr(2, 9);
+    const user = {
+      id,
+      email,
+      hashed_password,
+    };
+    USERS.push(user);
+
+    // Create user in Stream Chat
+    await client.upsertUser({
+      id,
+      email,
+      name: email,
+    });
+
+    // Create token for user
+    const token = client.createToken(id);
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
+  } catch (e) {
+    return res.json({
+      message: 'User already exists.',
+    });
+  }
+});
+
+// Login user
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = USERS.find((user) => user.email === email);
+  const hashed_password = hashSync(password, salt);
+
+  if (!user || user.hashed_password !== hashed_password) {
+    return res.status(400).json({
+      message: 'Invalid credentials.',
+    });
+  }
+  // Create token for user
+  const token = client.createToken(user.id);
+
+  return res.json({
     token,
-    user:{
-        id:user.id,
-        email:user.email
+    user: {
+      id: user.id,
+      email: user.email,
     },
-});
+  });
 });
 
-app.listen(PORT, () =>{
-    console.log(`Server is listening on port ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
 });
