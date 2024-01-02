@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react'
 import { Link } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
+import * as Haptics from "expo-haptics";
 
 const categories = [
   {
@@ -35,10 +36,28 @@ const categories = [
   },
 ];
 
-const ExploreHeader = () => {
+interface Props{
+onCategoryChanged: (category: string) => void
+}
 
+const ExploreHeader = ({onCategoryChanged} : Props) => {
+ const scrollref = useRef<ScrollView>(null);
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const selectCategory = (index: number) => {
+    const selected = itemsRef.current[index]
+
+    setActiveIndex(index);
+
+    selected?.measure((x) => {
+      scrollref.current?.scrollTo({ x: x - 16, y: 0, animated: true })
+    })
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onCategoryChanged(categories[index].name);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={styles.container}>
@@ -58,19 +77,22 @@ const ExploreHeader = () => {
         </View>
 
         <ScrollView
+        ref={scrollref}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             alignItems: 'center',
-            gap: 20,
+            gap: 30,
             paddingHorizontal: 16,
           }}>
           {categories.map((item, index) => (
             <TouchableOpacity key={index}
+              onPress={() => selectCategory(index)}
               ref={(el) => itemsRef.current[index] = el}
               style={activeIndex === index ? styles.categoryBtnActive : styles.categoryBtn}>
-              <MaterialIcons size={24} name={item.icon as any} />
-              <Text>{item.name}</Text>
+              <MaterialIcons size={24} color={activeIndex === index ? '#000' : Colors.grey}
+                name={item.icon as any} />
+              <Text style={activeIndex === index ? styles.categoryTextActive : styles.categoryText}>{item.name}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
