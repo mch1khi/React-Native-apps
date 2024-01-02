@@ -36,12 +36,12 @@ const categories = [
   },
 ];
 
-interface Props{
-onCategoryChanged: (category: string) => void
+interface Props {
+  onCategoryChanged: (category: string) => void
 }
 
-const ExploreHeader = ({onCategoryChanged} : Props) => {
- const scrollref = useRef<ScrollView>(null);
+const ExploreHeader = ({ onCategoryChanged }: Props) => {
+  const scrollref = useRef<ScrollView>(null);
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -77,7 +77,7 @@ const ExploreHeader = ({onCategoryChanged} : Props) => {
         </View>
 
         <ScrollView
-        ref={scrollref}
+          ref={scrollref}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{

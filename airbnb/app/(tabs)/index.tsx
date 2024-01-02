@@ -8,10 +8,10 @@ import listingsData from '@/assets/data/airbnb-listings.json';
 
 const Page
   = () => {
-    const [category, setCategory] =  useState('Tiny homes');
-    const items = useMemo (() => listingsData as any, []);
+    const [category, setCategory] = useState('Tiny homes');
+    const items = useMemo(() => listingsData as any, []);
 
-    const onDataChanged = (category:string) => {
+    const onDataChanged = (category: string) => {
       setCategory(category)
 
     }
@@ -20,10 +20,10 @@ const Page
       <View style={{ flex: 1, }}>
         <Stack.Screen
           options={{
-            header: () => <ExploreHeader onCategoryChanged={onDataChanged}/>,
+            header: () => <ExploreHeader onCategoryChanged={onDataChanged} />,
           }}
         />
-        <Listings listings={items} category={category } />
+        <Listings listings={items} category={category} />
       </View>
     )
   }
