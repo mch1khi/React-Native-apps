@@ -8,13 +8,13 @@ import listingsData from '@/assets/data/airbnb-listings.json';
 
 const Page
   = () => {
-    const [category, setCategory] = useState('Tiny homes');
+    
     const items = useMemo(() => listingsData as any, []);
+    const [category, setCategory] = useState<string>('Tiny homes');
 
     const onDataChanged = (category: string) => {
-      setCategory(category)
-
-    }
+      setCategory(category);
+    };  
 
     return (
       <View style={{ flex: 1, }}>
